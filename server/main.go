@@ -1,7 +1,13 @@
 package main
 
-import app "gametools/server/framework"
+import (
+	"gametools/server/controllers"
+	app "gametools/server/framework"
+)
 
 func main() {
-	app.Run(":3000")
+	app.NewApp().
+		Run(
+			controllers.UserController{},
+		)
 }
