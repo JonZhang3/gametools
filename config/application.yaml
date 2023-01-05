@@ -1,0 +1,5 @@
+server:
+    port: 8080
+datasource:
+    dsn: root:123456@tcp(10.0.3.151:3306)/gametools?charset=utf8mb4&parseTime=True&loc=Local
+    auto-migrate: true

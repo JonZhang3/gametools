@@ -1,18 +1,19 @@
-package framework
+package app
 
 import (
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
 )
 
-var Logger = &logger{}
+var Logger = New()
 
 type logger struct {
 }
 
-func (*logger) New() {
-	zerolog.TimeFieldFormat = zerolog.TimeFormatUnix
+func New() *logger {
+	zerolog.TimeFieldFormat = "2006-01-02 15:04:05"
 	zerolog.SetGlobalLevel(zerolog.InfoLevel)
+	return &logger{}
 }
 
 func (*logger) Info(msg string) {

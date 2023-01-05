@@ -1,10 +1,11 @@
-package framework
+package app
 
 import (
 	"fmt"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
+	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 )
 
@@ -54,11 +55,10 @@ func NewApp() *application {
 		Config: &config{},
 	}
 	initConfig(app)
-    app.initDatabase()
 	return app
 }
 
-func (*application) Run(controllers ...Controller) {
+func (app *application) Run(controllers ...Controller) {
 	server := fiber.New(fiber.Config{
 		ErrorHandler: func(ctx *fiber.Ctx, err error) error {
 			message := ""
@@ -86,13 +86,21 @@ func (*application) Run(controllers ...Controller) {
 		}
 	}
 	Logger.Info("starting server")
-	err := server.Listen("")
+	err := server.Listen(fmt.Sprintf(":%d", app.Config.Server.Port))
 	if err != nil {
 		panic(fmt.Errorf("start server error %v", err))
 	}
-
 }
 
-func (app *application) initDatabase() {
-
+func (app *application) InitDatabase(models ...any) *application {
+	dsConfig := app.Config.Datasource
+	db, err := gorm.Open(mysql.Open(dsConfig.Dsn), &gorm.Config{})
+	if err != nil {
+		panic(fmt.Errorf("init database error %v", err))
+	}
+	if dsConfig.AutoMigrate && len(models) > 0 {
+		db.AutoMigrate(models...)
+	}
+	DB = db
+	return app
 }

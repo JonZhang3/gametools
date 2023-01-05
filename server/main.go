@@ -1,12 +1,17 @@
 package main
 
 import (
+	"gametools/server/app"
 	"gametools/server/controllers"
-	app "gametools/server/framework"
+	"gametools/server/models"
 )
 
 func main() {
 	app.NewApp().
+		InitDatabase(
+            &models.User{},
+            &models.Role{},
+        ).
 		Run(
 			controllers.UserController{},
 		)

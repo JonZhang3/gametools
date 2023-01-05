@@ -1,4 +1,4 @@
-package framework
+package app
 
 import (
 	"fmt"
@@ -10,7 +10,7 @@ import (
 
 //https://juejin.cn/post/7016979344094396424
 const (
-	defaultConfigFileName = "/config/application.yaml"
+	defaultConfigFileName = "config/application.yaml"
 	EnvKeyConfig          = "config"
 )
 
@@ -19,9 +19,7 @@ type server struct {
 }
 
 type datasource struct {
-	Url         string `mapstructure:"url"`
-	Username    string `mapstructure:"username"`
-	Password    string `mapstructure:"password"`
+	Dsn         string `mapstructure:"dsn"`
 	AutoMigrate bool   `mapstructure:"auto-migrate"`
 }
 

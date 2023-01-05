@@ -1,4 +1,4 @@
-package framework
+package app
 
 type BizError struct {
 	Message string
