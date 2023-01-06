@@ -4,7 +4,6 @@ import (
 	"gametools/server/app"
 	"gametools/server/common"
 	"gametools/server/models"
-	"time"
 
 	"github.com/gofiber/fiber/v2"
 )
@@ -25,11 +24,25 @@ type UserVO struct {
 	UpdatedAt common.DateTime `json:"updatedAt"`
 }
 
+// 新增用户
 func addUser(c *fiber.Ctx) error {
 	user := &models.User{}
 	if err := c.BodyParser(user); err != nil {
 		return err
 	}
-	app.DB.Create(user)
-	return c.JSON(app.Ok(user))
+	user.Password = common.EncodePassword(user.Password)
+	user.State = models.Valid
+	r := app.DB.Create(user)
+	if r.Error != nil {
+		return r.Error
+	}
+	vo := &UserVO{
+		ID:        user.ID,
+		Username:  user.Username,
+		Nickname:  user.Nickname,
+		State:     user.State,
+		CreatedAt: common.DateTime(user.CreatedAt),
+		UpdatedAt: common.DateTime(user.UpdatedAt),
+	}
+	return c.JSON(app.Ok(vo))
 }
