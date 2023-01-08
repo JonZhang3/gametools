@@ -5,6 +5,14 @@ import (
 	"github.com/valyala/fasthttp"
 )
 
+func WrapContext(ctx *fiber.Ctx) *Context {
+	return &Context{
+		ctx:      ctx,
+		Request:  &Request{ctx: ctx},
+		Response: &Response{ctx: ctx},
+	}
+}
+
 type Context struct {
 	ctx      *fiber.Ctx
 	Request  *Request
@@ -33,6 +41,14 @@ func (ctx *Context) GetRouteURL(routeName string, params fiber.Map) (string, err
 
 func (ctx *Context) Method(override ...string) string {
 	return ctx.ctx.Method(override...)
+}
+
+func (ctx *Context) Range(size int) (fiber.Range, error) {
+	return ctx.Range(size)
+}
+
+func (ctx *Context) Redirect(location string, status ...int) error {
+	return ctx.ctx.Redirect(location, status...)
 }
 
 type Request struct {
@@ -83,6 +99,14 @@ func (req *Request) XHR() bool {
 	return req.ctx.XHR()
 }
 
+func (req *Request) Path(override ...string) string {
+	return req.ctx.Path(override...)
+}
+
+func (req *Request) Protocol() string {
+	return req.ctx.Protocol()
+}
+
 func (req *Request) Body() []byte {
 	return req.ctx.Body()
 }
@@ -105,6 +129,18 @@ type Route struct {
 
 func (r *Route) AllParams() map[string]string {
 	return r.ctx.AllParams()
+}
+
+func (r *Route) Params(key string, defaultValue ...string) string {
+	return r.ctx.Params(key, defaultValue...)
+}
+
+func (r *Route) ParamsInt(key string) (int, error) {
+	return r.ctx.ParamsInt(key)
+}
+
+func (r *Route) ParamsParser(out interface{}) error {
+	return r.ctx.ParamsParser(out)
 }
 
 type Response struct {
