@@ -28,7 +28,7 @@ type config struct {
 	Datasource datasource `mapstructure:"datasource"`
 }
 
-func initConfig(app *application) {
+func initConfig(app *Application) {
 	var configFile string
 	if configEnv := os.Getenv(EnvKeyConfig); configEnv != "" {
 		configFile = configEnv

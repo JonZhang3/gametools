@@ -1,16 +1,31 @@
 package models
 
-import (
-	"time"
-)
-
 type Project struct {
-	ID        uint64 `gorm:"primaryKey;autoIncrement"`
-	Name      string `gorm:"size:64;comment:项目名"`
-	Desc      string `gorm:"size:256;comment:项目描述"`
-	State     State  `gorm:"default:1;comment:状态"`
-	CreatedBy uint64 `gorm:"comment:创建用户ID"`
-	CreatedAt time.Time
-	UpdatedAt time.Time
-	Users     []*User `gorm:"many2many:user_project_rel"`
+	BaseModel
+	Name        string  `gorm:"unique;not null;size:64;comment:项目名"`
+	Description string  `gorm:"size:256;comment:项目描述"`
+	State       State   `gorm:"default:1;comment:状态"`
+	CreatedBy   uint64  `gorm:"not null;comment:创建用户ID"`
+	Users       []*User `gorm:"many2many:user_project_rel"`
+}
+
+type Document struct {
+	BaseModel
+	Name        string       `gorm:"not null;size:256;uniqueIndex:idx_name_project;comment:文档名称"`
+	Description string       `gorm:"size:256;comment:文档描述"`
+	Type        DocumentType `gorm:"default:csv;comment:文档类型"`
+	StoragePath string       `gorm:"comment:存储路径"`
+	ProjectId   uint64       `gorm:"uniqueIndex:idx_name_project;comment:项目ID"`
+	Sort        uint32       `gorm:"default:0;comment:显示顺序"`
+	CreatedBy   uint64       `gorm:"not null;comment:创建用户"`
+}
+
+type DocumentColumn struct {
+	BaseModel
+	Name        string         `gorm:"not null;size:256;comment:文档列名"`
+	Description string         `gorm:"not null;size:256;comment:列描述"`
+	Type        string         `gorm:"not null;size:256;comment:列类型"`
+	CalcType    ColumnCalcType `gorm:"default:edit;not null;size:64;comment:计算方式"`
+	Sort        uint32         `gorm:"default:0;comment:显示顺序"`
+	CreatedBy   uint64         `gorm:"not null;comment:创建用户"`
 }

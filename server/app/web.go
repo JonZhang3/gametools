@@ -18,6 +18,7 @@ const (
 	resultCodeError = 501
 )
 
+// JsonResult 接口响应
 type JsonResult struct {
 	Code    int         `json:"code"`
 	Message string      `json:"message"`
@@ -45,20 +46,20 @@ func Error(message string, data ...interface{}) *JsonResult {
 
 var DB *gorm.DB
 
-type application struct {
+type Application struct {
 	Config *config
 	Router *fiber.App
 }
 
-func NewApp() *application {
-	app := &application{
+func NewApp() *Application {
+	app := &Application{
 		Config: &config{},
 	}
 	initConfig(app)
 	return app
 }
 
-func (app *application) Run(controllers ...Controller) {
+func (app *Application) Run(controllers ...Controller) {
 	server := fiber.New(fiber.Config{
 		ErrorHandler: func(ctx *fiber.Ctx, err error) error {
 			message := ""
@@ -92,14 +93,17 @@ func (app *application) Run(controllers ...Controller) {
 	}
 }
 
-func (app *application) InitDatabase(models ...any) *application {
+func (app *Application) InitDatabase(models ...any) *Application {
 	dsConfig := app.Config.Datasource
 	db, err := gorm.Open(mysql.Open(dsConfig.Dsn), &gorm.Config{})
 	if err != nil {
 		panic(fmt.Errorf("init database error %v", err))
 	}
 	if dsConfig.AutoMigrate && len(models) > 0 {
-		db.AutoMigrate(models...)
+		err = db.AutoMigrate(models...)
+		if err != nil {
+			panic(fmt.Errorf("database auto migrate error: %v", err))
+		}
 	}
 	DB = db
 	return app
