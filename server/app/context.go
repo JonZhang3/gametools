@@ -207,6 +207,14 @@ func (resp *Response) Status(status int) {
 	resp.ctx.Status(status)
 }
 
+func (resp *Response) Ok(data interface{}, message ...string) error {
+	return resp.ctx.JSON(Ok(data, message...))
+}
+
+func (resp *Response) Error(message string, data ...interface{}) error {
+	return resp.ctx.JSON(Error(message, data...))
+}
+
 type Cookie struct {
 	ctx *fiber.Ctx
 }

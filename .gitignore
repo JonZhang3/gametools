@@ -5,7 +5,7 @@
 /src/.umi
 /src/.umi-production
 /src/.umi-test
-/.umi
+.umi
 /.umi-production
 /.umi-test
 /dist
