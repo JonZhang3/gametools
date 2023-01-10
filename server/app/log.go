@@ -5,12 +5,12 @@ import (
 	"github.com/rs/zerolog/log"
 )
 
-var Logger = New()
+var Logger = newLogger()
 
 type logger struct {
 }
 
-func New() *logger {
+func newLogger() *logger {
 	zerolog.TimeFieldFormat = "2006-01-02 15:04:05"
 	zerolog.SetGlobalLevel(zerolog.InfoLevel)
 	return &logger{}

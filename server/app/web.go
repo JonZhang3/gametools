@@ -5,6 +5,7 @@ import (
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
+    flogger "github.com/gofiber/fiber/v2/middleware/logger"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 )
