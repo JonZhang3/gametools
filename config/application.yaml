@@ -6,5 +6,6 @@ datasource:
 auth:
     token:
         expire-time: 30m
+        signing-key: gametools
     excludes:
         - /login

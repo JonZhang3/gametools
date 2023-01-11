@@ -10,6 +10,10 @@ import (
 	"gorm.io/gorm"
 )
 
+var DB *gorm.DB
+
+var app *Application
+
 type RouteHandleFunc func(ctx *Context) error
 
 type Router struct {
@@ -75,13 +79,11 @@ func Error(message string, data ...interface{}) *JsonResult {
 	return &JsonResult{Code: resultCodeError, Message: message, Data: d}
 }
 
-var DB *gorm.DB
-
 func useJwt(app *fiber.App, cfg *config) {
 	app.Use(jwtware.New(jwtware.Config{
 		Filter: func(ctx *fiber.Ctx) bool {
 			path := ctx.Path()
-			excludePaths := cfg.Auth.excludes
+			excludePaths := cfg.Auth.Excludes
 			if excludePaths != nil && len(excludePaths) > 0 {
 				for _, p := range excludePaths {
 					if path == p {
@@ -91,6 +93,12 @@ func useJwt(app *fiber.App, cfg *config) {
 			}
 			return false
 		},
+		SigningKey: []byte(cfg.Auth.Token.SigningKey),
+		ErrorHandler: func(ctx *fiber.Ctx, err error) error {
+			fmt.Printf("%v", err)
+			Logger.Error(err, "no JWT or JWT is expired")
+			return ctx.Status(fiber.StatusUnauthorized).JSON(Error("no auth"))
+		},
 	}))
 }
 
@@ -99,12 +107,23 @@ type Application struct {
 	Router *fiber.App
 }
 
+func GetApp() *Application {
+	if app == nil {
+		panic(fmt.Errorf("application is not init, use NewApp() to init application"))
+	}
+	return app
+}
+
 func NewApp() *Application {
-	app := &Application{
+	if app != nil {
+		panic("the application already initialized")
+	}
+	a := &Application{
 		Config: &config{},
 	}
-	initConfig(app)
-	return app
+	initConfig(a)
+	app = a
+	return a
 }
 
 func (app *Application) Run(controllers ...Controller) {

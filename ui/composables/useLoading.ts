@@ -1,3 +1,5 @@
+import {ref} from '#imports';
+
 export default function (initValue: boolean = false) {
     const loading = ref(initValue);
     const setLoading = (value: boolean) => {

@@ -24,12 +24,13 @@ type datasource struct {
 }
 
 type auth struct {
-	excludes []string `mapstructure:"excludes"`
-	token    *token   `mapstructure:"token"`
+	Excludes []string `mapstructure:"excludes"`
+	Token    token    `mapstructure:"token"`
 }
 
 type token struct {
 	ExpireTime time.Duration `mapstructure:"expire-time"`
+	SigningKey string        `mapstructure:"signing-key"`
 }
 
 type config struct {

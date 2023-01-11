@@ -27,6 +27,9 @@
 </template>
 
 <script lang="ts" setup>
+import {ref, reactive, useAsyncData} from '#imports';
+import {Message} from "@arco-design/web-vue";
+import {ValidatedError} from '@arco-design/web-vue/es/form/interface';
 import useLoading from '~/composables/useLoading';
 
 const {loading, setLoading} = useLoading();
@@ -40,7 +43,17 @@ function handleLogin({errors, values}: {
     errors: Record<string, ValidatedError> | undefined;
     values: object;
 }) {
+    if (!errors) {
+        setLoading(true);
+        try {
 
+            Message.success('欢迎使用');
+        } catch (err: Error) {
+
+        } finally {
+            setLoading(false);
+        }
+    }
 }
 
 </script>

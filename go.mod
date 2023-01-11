@@ -4,12 +4,9 @@ go 1.18
 
 require (
 	github.com/gofiber/fiber/v2 v2.41.0
+	github.com/gofiber/jwt/v3 v3.3.4
+	github.com/golang-jwt/jwt/v4 v4.4.3
 	github.com/rs/zerolog v1.28.0
-)
-
-require (
-	github.com/gofiber/jwt/v3 v3.3.4 // indirect
-	github.com/golang-jwt/jwt/v4 v4.4.3 // indirect
 )
 
 require (
@@ -43,7 +40,7 @@ require (
 	github.com/spf13/viper v1.14.0
 	github.com/subosito/gotenv v1.4.1 // indirect
 	github.com/valyala/bytebufferpool v1.0.0 // indirect
-	github.com/valyala/fasthttp v1.44.0 // indirect
+	github.com/valyala/fasthttp v1.44.0
 	github.com/valyala/tcplisten v1.0.0 // indirect
 	golang.org/x/sys v0.4.0 // indirect
 	golang.org/x/text v0.5.0 // indirect
