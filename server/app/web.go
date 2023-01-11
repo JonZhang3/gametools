@@ -2,16 +2,46 @@ package app
 
 import (
 	"fmt"
+	jwtware "github.com/gofiber/jwt/v3"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
-    flogger "github.com/gofiber/fiber/v2/middleware/logger"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 )
 
+type RouteHandleFunc func(ctx *Context) error
+
+type Router struct {
+	app *fiber.App
+}
+
+func (r *Router) Post(path string, handler RouteHandleFunc) {
+	r.app.Post(path, func(ctx *fiber.Ctx) error {
+		return handler(WrapContext(ctx))
+	})
+}
+
+func (r *Router) Get(path string, handler RouteHandleFunc) {
+	r.app.Get(path, func(ctx *fiber.Ctx) error {
+		return handler(WrapContext(ctx))
+	})
+}
+
+func (r *Router) Put(path string, handler RouteHandleFunc) {
+	r.app.Put(path, func(ctx *fiber.Ctx) error {
+		return handler(WrapContext(ctx))
+	})
+}
+
+func (r *Router) Delete(path string, handler RouteHandleFunc) {
+	r.app.Delete(path, func(ctx *fiber.Ctx) error {
+		return handler(WrapContext(ctx))
+	})
+}
+
 type Controller interface {
-	Register(app *fiber.App)
+	Register(router *Router)
 }
 
 const (
@@ -47,6 +77,23 @@ func Error(message string, data ...interface{}) *JsonResult {
 
 var DB *gorm.DB
 
+func useJwt(app *fiber.App, cfg *config) {
+	app.Use(jwtware.New(jwtware.Config{
+		Filter: func(ctx *fiber.Ctx) bool {
+			path := ctx.Path()
+			excludePaths := cfg.Auth.excludes
+			if excludePaths != nil && len(excludePaths) > 0 {
+				for _, p := range excludePaths {
+					if path == p {
+						return true
+					}
+				}
+			}
+			return false
+		},
+	}))
+}
+
 type Application struct {
 	Config *config
 	Router *fiber.App
@@ -63,27 +110,27 @@ func NewApp() *Application {
 func (app *Application) Run(controllers ...Controller) {
 	server := fiber.New(fiber.Config{
 		ErrorHandler: func(ctx *fiber.Ctx, err error) error {
-			message := ""
-			if e, ok := err.(*BizError); ok {
-				message = e.Error()
+			message := err.Error()
+			if _, ok := err.(*BizError); ok {
 				return ctx.JSON(Error(message))
 			}
 			code := fiber.StatusInternalServerError
 			if e, ok := err.(*fiber.Error); ok {
 				code = e.Code
-				message = e.Error()
-				Logger.Error(e, "")
 			}
+			Logger.Error(err, "")
 			return ctx.Status(code).JSON(Error(message))
 		},
 	})
 	// 配置跨域
 	server.Use(cors.New())
+	useJwt(server, app.Config)
 	// 注册 Controller
 	if len(controllers) > 0 {
+		router := &Router{app: server}
 		for _, c := range controllers {
 			if c != nil {
-				c.Register(server)
+				c.Register(router)
 			}
 		}
 	}

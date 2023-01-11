@@ -2,10 +2,10 @@ package app
 
 import (
 	"fmt"
+	"github.com/spf13/viper"
 	"os"
 	"path"
-
-	"github.com/spf13/viper"
+	"time"
 )
 
 //https://juejin.cn/post/7016979344094396424
@@ -23,9 +23,19 @@ type datasource struct {
 	AutoMigrate bool   `mapstructure:"auto-migrate"`
 }
 
+type auth struct {
+	excludes []string `mapstructure:"excludes"`
+	token    *token   `mapstructure:"token"`
+}
+
+type token struct {
+	ExpireTime time.Duration `mapstructure:"expire-time"`
+}
+
 type config struct {
 	Server     server     `mapstructure:"server"`
 	Datasource datasource `mapstructure:"datasource"`
+	Auth       auth       `mapstructure:"auth"`
 }
 
 func initConfig(app *Application) {

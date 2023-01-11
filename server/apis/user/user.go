@@ -1,34 +1,32 @@
 package user
 
 import (
+	"gametools/server/apis"
 	"gametools/server/app"
 	"gametools/server/common"
 	"gametools/server/models"
-
-	"github.com/gofiber/fiber/v2"
 )
 
 type Controller struct {
 }
 
-func (Controller) Register(app *fiber.App) {
-	app.Post("/login", login)
+func (Controller) Register(router *app.Router) {
+	router.Post("/login", login)
 
-	app.Post("/user", addUser)
+	router.Post("/user", addUser)
 }
 
 type ViewObject struct {
 	ID        uint64          `json:"id"`
 	Username  string          `json:"username"`
 	Nickname  string          `json:"nickname"`
-	State     models.State    `json:"state"`
-	CreatedAt common.DateTime `json:"createdAt"`
-	UpdatedAt common.DateTime `json:"updatedAt"`
+	State     models.State    `json:"state,omitempty"`
+	CreatedAt common.DateTime `json:"createdAt,omitempty"`
+	UpdatedAt common.DateTime `json:"updatedAt,omitempty"`
 }
 
 // 登录
-func login(c *fiber.Ctx) error {
-	ctx := app.WrapContext(c)
+func login(ctx *app.Context) error {
 	form := &models.User{}
 	err := ctx.Request.BodyParser(form)
 	if err != nil {
@@ -46,13 +44,26 @@ func login(c *fiber.Ctx) error {
 		return ctx.Response.Error("该用户无效")
 	}
 	// TODO 生成 JWT
-	return ctx.Response.Ok(nil)
+	token, err := apis.NewToken(user)
+	if err != nil {
+		return err
+	}
+	return ctx.Response.Ok(map[string]any{
+		"token": token,
+		"user": &ViewObject{
+			ID:        user.ID,
+			Username:  user.Username,
+			Nickname:  user.Nickname,
+			CreatedAt: user.CreatedAt,
+			UpdatedAt: user.UpdatedAt,
+		},
+	})
 }
 
 // 新增用户
-func addUser(c *fiber.Ctx) error {
+func addUser(ctx *app.Context) error {
 	user := &models.User{}
-	if err := c.BodyParser(user); err != nil {
+	if err := ctx.Request.BodyParser(user); err != nil {
 		return err
 	}
 	user.Password = common.EncodePassword(user.Password)
@@ -66,8 +77,8 @@ func addUser(c *fiber.Ctx) error {
 		Username:  user.Username,
 		Nickname:  user.Nickname,
 		State:     user.State,
-		CreatedAt: common.DateTime(user.CreatedAt),
-		UpdatedAt: common.DateTime(user.UpdatedAt),
+		CreatedAt: user.CreatedAt,
+		UpdatedAt: user.UpdatedAt,
 	}
-	return c.JSON(app.Ok(vo))
+	return ctx.Response.Ok(vo)
 }
