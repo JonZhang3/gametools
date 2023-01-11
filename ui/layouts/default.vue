@@ -6,7 +6,7 @@
         <a-layout style="overflow: hidden;">
             <a-layout-sider breakpoint="xl" collapsible :width="220" hide-trigger>
                 <div class="menu-wrapper">
-                    <a-menu :auto-open="false" auto-open-selected level-indent={34} style="height: 100%">
+                    <a-menu :auto-open="false" auto-open-selected :level-indent="34" style="height: 100%">
 
                     </a-menu>
                 </div>
