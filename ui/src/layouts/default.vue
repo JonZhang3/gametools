@@ -1,22 +1,30 @@
 <template>
     <a-layout class="layout">
         <a-layout-header class="layout-navbar">
-            <!-- <Navbar /> -->
+            <Header />
         </a-layout-header>
         <a-layout style="overflow: hidden;">
             <a-layout-sider breakpoint="xl" collapsible :width="220" hide-trigger>
                 <div class="menu-wrapper">
-                    <a-menu :auto-open="false" auto-open-selected :level-indent="34" style="height: 100%">
-
+                    <a-menu :auto-open="false" auto-open-selected
+                            show-collapse-button
+                            :level-indent="34" style="height: 100%">
+                        <a-menu-item key="home">首页</a-menu-item>
+                        <a-menu-item key="project">项目</a-menu-item>
+                        <a-menu-item key="setting">设置</a-menu-item>
                     </a-menu>
                 </div>
             </a-layout-sider>
             <a-layout-content class="layout-content">
-                <slot></slot>
+                <router-view/>
             </a-layout-content>
         </a-layout>
     </a-layout>
 </template>
+
+<script lang="ts" setup>
+import Header from "@/components/layouts/Header.vue";
+</script>
 
 <style lang="less" scoped>
 @nav-size-height: 60px;

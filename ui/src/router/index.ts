@@ -16,7 +16,20 @@ const routes: Array<RouteRecordRaw> = [
             {
                 path: "",
                 name: "home",
-                component: () => import("@/pages/login.vue")
+                component: () => import("@/pages/home.vue"),
+                meta: {
+                    title: "首页",
+                    icon: "icon-home"
+                }
+            },
+            {
+                path: "/projects",
+                name: "projects",
+                component: () => import("@/pages/projects.vue"),
+                meta: {
+                    title: "项目",
+                    icon: "icon-apps"
+                }
             }
         ]
     }

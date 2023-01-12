@@ -27,10 +27,10 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, reactive } from "vue";
+import { reactive, ref } from "vue";
 import { useRouter } from "vue-router";
 import { Message } from "@arco-design/web-vue";
-import { ValidatedError } from "@arco-design/web-vue/es/form/interface";
+import type { ValidatedError } from "@arco-design/web-vue/es/form/interface";
 import useLoading from "@/composables/useLoading";
 
 const router = useRouter();
@@ -55,7 +55,7 @@ async function handleLogin({ errors, values }: {
             query: { ...othersQuery }
         });
         Message.success("欢迎使用");
-    } catch (err: Error) {
+    } catch (err: any) {
         errorMessage.value = err.message;
     } finally {
         setLoading(false);
@@ -63,3 +63,24 @@ async function handleLogin({ errors, values }: {
 }
 
 </script>
+
+<style lang="less" scoped>
+.login-form {
+    &-wrapper {
+        width: 320px;
+    }
+
+    &-title {
+        color: var(--color-text-1);
+        font-weight: 500;
+        font-size: 24px;
+        line-height: 32px;
+    }
+
+    &-error-msg {
+        height: 32px;
+        color: rgb(var(--red-6));
+        line-height: 32px;
+    }
+}
+</style>
