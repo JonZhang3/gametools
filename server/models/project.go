@@ -1,5 +1,7 @@
 package models
 
+import "gametools/server/common"
+
 type Project struct {
 	BaseModel
 	Name        string  `gorm:"unique;not null;size:64;comment:项目名"`
@@ -8,6 +10,14 @@ type Project struct {
 	CreatedBy   uint64  `gorm:"not null;comment:创建用户ID"`
 	Users       []*User `gorm:"many2many:user_project_rel"`
 }
+
+type DocumentType string
+
+const (
+	DocumentTypeCSV  = "csv"
+	DocumentTypeXML  = "xml"
+	DocumentTypeJSON = "json"
+)
 
 type Document struct {
 	BaseModel
@@ -20,12 +30,36 @@ type Document struct {
 	CreatedBy   uint64       `gorm:"not null;comment:创建用户"`
 }
 
+type ColumnType string
+
+const (
+	ColumnTypeText   = "text"
+	ColumnTypeNumber = "number"
+)
+
+type ColumnCalcType string
+
+const (
+	ColumnCalcTypeFixed = "fixed"
+	ColumnCalcTypeEdit  = "edit"
+	ColumnCalcTypeCalc  = "calc"
+)
+
 type DocumentColumn struct {
 	BaseModel
 	Name        string         `gorm:"not null;size:256;comment:文档列名"`
 	Description string         `gorm:"not null;size:256;comment:列描述"`
-	Type        string         `gorm:"not null;size:256;comment:列类型"`
+	Type        ColumnType     `gorm:"not null;size:256;comment:列类型"`
 	CalcType    ColumnCalcType `gorm:"default:edit;not null;size:64;comment:计算方式"`
+	Size        uint64         `gorm:"comment:最大长度/大小"`
 	Sort        uint32         `gorm:"default:0;comment:显示顺序"`
 	CreatedBy   uint64         `gorm:"not null;comment:创建用户"`
+}
+
+type CommitLog struct {
+	CommitHash string
+	Committer  string
+	Email      string
+	Message    string
+	Date       common.DateTime
 }

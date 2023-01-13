@@ -5,70 +5,30 @@ import { compile, computed, defineComponent, h, ref } from "vue";
 import { listenerRouteChange } from "@/utils/route-listener";
 
 export default defineComponent({
-    setup() {
+    props: {
+        name: {
+            type: String,
+            default: "root",
+        },
+    },
+    setup(props) {
+        const name = ref(props.name);
         const router = useRouter();
         const appRouters = computed(() => {
-            return router
-                .getRoutes()
-                .find((el) => el.name === "root") as RouteRecordNormalized;
+            return router.getRoutes().filter((el) => el.name === name.value);
         });
         const selectedKeys = ref<string[]>([]);
         const goto = (item: RouteRecordRaw) => {
             router.push({
-                name: item.name
+                name: item.name,
             });
         };
-
-        const menuTree = computed(() => {
-            const copyRouter = JSON.parse(JSON.stringify(appRouters.value.children));
-            copyRouter.sort(
-                (a: RouteRecordNormalized, b: RouteRecordNormalized) => {
-                    return (a.meta.order as number || 0) - (b.meta.order as number || 0);
-                }
-            );
-
-            function travel(_routes: RouteRecordRaw[], layer: number) {
-                if (!_routes) return null;
-                const collector: any = _routes.map((element) => {
-                    // leaf node
-                    if (!element.children) {
-                        return element;
-                    }
-
-                    // route filter hideInMenu true
-                    element.children = element.children.filter(
-                        (x) => x.meta?.hideInMenu !== true
-                    );
-
-                    // Associated child node
-                    const subItem = travel(element.children, layer);
-                    if (subItem.length) {
-                        element.children = subItem;
-                        return element;
-                    }
-                    // the else logic
-                    if (layer > 1) {
-                        element.children = subItem;
-                        return element;
-                    }
-
-                    if (element.meta?.hideInMenu !== true) {
-                        return element;
-                    }
-
-                    return null;
-                });
-                return collector.filter(Boolean);
-            }
-
-            return travel(copyRouter, 0);
-        });
 
         listenerRouteChange((newRoute) => {
             const matched = newRoute.matched;
             for (let i = matched.length - 1; i >= 0; i--) {
                 const item = matched[i];
-                if (item.meta?.hideInMenu !== true) {
+                if (item.meta?.title) {
                     selectedKeys.value = [item.name as string];
                     break;
                 }
@@ -76,35 +36,38 @@ export default defineComponent({
         }, true);
 
         const renderSubMenu = () => {
-            function travel(_route: RouteRecordRaw[], nodes = []) {
+            function travel(_route: RouteRecordNormalized[], nodes = []) {
                 if (_route) {
-                    _route.forEach(element => {
-                        const icon = element?.meta?.icon
-                            ? `<${element?.meta?.icon}/>`
-                            : ``;
-                        const hasChildren = element.children && element.children.length > 0;
+                    _route.forEach((el) => {
+                        const isLayout = el.meta?.layout;
+                        const hasChildren = el.children && el.children.length > 0;
+                        if (!isLayout && !el.meta?.title) {
+                            return;
+                        }
+                        const icon = el.meta?.icon ? `<${el.meta.icon}/>` : "";
                         const r = hasChildren ? (
-                            <a-sub-menu key={element?.name} v-slots={{
-                                icon: () => h(compile(icon)),
-                                title: () => element?.meta?.title
-                            }}>
-                                {
-                                    element.children?.map((elem) => {
-                                        return elem?.meta?.menu ? (
-                                            <a-menu-item key={elem?.name} onClick={() => goto(elem)}>
-                                                {elem?.meta?.title}
-                                                {travel(elem.children ?? [])}
-                                            </a-menu-item>
-                                        ) : null;
-                                    })
-                                }
+                            <a-sub-menu
+                                key={el.name}
+                                v-slots={{
+                                    icon: () => h(compile(icon)),
+                                    title: () => el.meta?.title,
+                                }}
+                            >
+                                {el.children.map((ch) => {
+                                    return ch.meta?.title ? (
+                                        <a-menu-item key={ch.name} onClick={() => goto(ch)}>
+                                            {ch.meta.title}
+                                        </a-menu-item>
+                                    ) : null;
+                                })}
                             </a-sub-menu>
                         ) : (
                             <a-menu-item
-                                key={element?.name}
+                                key={el.name}
                                 v-slots={{ icon: () => h(compile(icon)) }}
-                                onClick={() => goto(element)}>
-                                {element?.meta?.title}
+                                onClick={() => goto(el)}
+                            >
+                                {el.meta?.title}
                             </a-menu-item>
                         );
                         nodes.push(r as never);
@@ -112,19 +75,22 @@ export default defineComponent({
                 }
                 return nodes;
             }
-
-            return travel(menuTree.value);
+            return travel(appRouters.value);
         };
 
-        return () => {
-            <a-menu auto-open={false} selected-keys={selectedKeys.value} auto-open-selected
-                    level-indent={34} style="height: 100%">
+        return () => (
+            <a-menu
+                auto-open={false}
+                selected-keys={selectedKeys.value}
+                auto-open-selected
+                level-indent={34}
+                style="height: 100%;"
+            >
                 {renderSubMenu()}
-            </a-menu>;
-        };
-    }
+            </a-menu>
+        );
+    },
 });
-
 </script>
 
 <style lang="less" scoped>

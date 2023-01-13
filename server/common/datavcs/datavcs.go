@@ -1,0 +1,7 @@
+package datavcs
+
+func Init() {
+
+}
+
+

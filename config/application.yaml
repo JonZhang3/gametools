@@ -9,3 +9,5 @@ auth:
         signing-key: gametools
     excludes:
         - /login
+datavcs:
+    root-path: C:/Users/user/Desktop/dolt

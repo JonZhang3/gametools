@@ -33,6 +33,13 @@ type Role struct {
 	State       State  `gorm:"default:1;comment:状态"`
 }
 
+type ResourceType string
+
+const (
+	ResourceTypeMenu ResourceType = "menu"
+	ResourceTypePath ResourceType = "path"
+)
+
 type Resource struct {
 	BaseModel
 	Name        string       `gorm:"not null;size:64;comment:资源名称"`

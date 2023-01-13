@@ -1,5 +1,18 @@
 package models
 
+type OperationType uint8
+
+const (
+	OperationLogin = iota + 1
+	OperationCreateProject
+	OperationUpdateProject
+	OperationDeleteProject
+	OperationAddUser
+	OperationDeleteUser
+	OperationCreateDocument
+	OperationDeleteDocument
+)
+
 // OperationLog 操作日志
 type OperationLog struct {
 	BaseModel

@@ -3,18 +3,16 @@
         <div class="login-form-title">GameTools</div>
         <div class="login-form-error-msg">{{ errorMessage }}</div>
         <a-form ref="form" :model="userForm" layout="vertical" @submit="handleLogin">
-            <a-form-item field="username"
-                         :rules="[{required: true, message: '用户名不能为空'}]"
-                         :validate-trigger="['change', 'blur']" hide-label>
+            <a-form-item field="username" :rules="[{ required: true, message: '用户名不能为空' }]"
+                :validate-trigger="['change', 'blur']" hide-label>
                 <a-input v-model="userForm.username" size="large" placeholder="用户名">
                     <template #prefix>
                         <icon-user />
                     </template>
                 </a-input>
             </a-form-item>
-            <a-form-item field="password"
-                         :rules="[{required: true, message: '密码不能为空'}]"
-                         :validate-trigger="['change', 'blur']" hide-label>
+            <a-form-item field="password" :rules="[{ required: true, message: '密码不能为空' }]"
+                :validate-trigger="['change', 'blur']" hide-label>
                 <a-input-password v-model="userForm.password" size="large" placeholder="密码" allow-clear>
                     <template #prefix>
                         <icon-lock />
@@ -38,21 +36,18 @@ const errorMessage = ref("");
 
 const userForm = reactive({
     username: "",
-    password: ""
+    password: "",
 });
 
 const { loading, setLoading } = useLoading();
 
-async function handleLogin({ errors, values }: {
-    errors: Record<string, ValidatedError> | undefined;
-    values: object;
-}) {
+async function handleLogin({ errors, values }: { errors: Record<string, ValidatedError> | undefined; values: object }) {
     setLoading(true);
     try {
         const { redirect, ...othersQuery } = router.currentRoute.value.query;
         await router.replace({
             name: (redirect || "home") as string,
-            query: { ...othersQuery }
+            query: { ...othersQuery },
         });
         Message.success("欢迎使用");
     } catch (err: any) {
@@ -61,7 +56,6 @@ async function handleLogin({ errors, values }: {
         setLoading(false);
     }
 }
-
 </script>
 
 <style lang="less" scoped>

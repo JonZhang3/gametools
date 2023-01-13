@@ -1,17 +1,21 @@
 import type { RouteRecordRaw } from "vue-router";
 import { createRouter, createWebHistory } from "vue-router";
 import DefaultLayout from "@/layouts/default.vue";
+import ProjectLayout from "@/layouts/project.vue";
 
 const routes: Array<RouteRecordRaw> = [
     {
         path: "/login",
         name: "login",
-        component: () => import("@/pages/login.vue")
+        component: () => import("@/pages/login.vue"),
     },
     {
         path: "/",
         name: "root",
         component: DefaultLayout,
+        meta: {
+            layout: true,
+        },
         children: [
             {
                 path: "",
@@ -19,8 +23,8 @@ const routes: Array<RouteRecordRaw> = [
                 component: () => import("@/pages/home.vue"),
                 meta: {
                     title: "首页",
-                    icon: "icon-home"
-                }
+                    icon: "icon-home",
+                },
             },
             {
                 path: "/projects",
@@ -28,11 +32,17 @@ const routes: Array<RouteRecordRaw> = [
                 component: () => import("@/pages/projects.vue"),
                 meta: {
                     title: "项目",
-                    icon: "icon-apps"
-                }
-            }
-        ]
-    }
+                    icon: "icon-apps",
+                },
+            },
+        ],
+    },
+    {
+        path: "/project/:id",
+        name: "project-root",
+        component: ProjectLayout,
+        children: [],
+    },
 ];
 
 const router = createRouter({
@@ -40,7 +50,7 @@ const router = createRouter({
     routes,
     scrollBehavior() {
         return { top: 0 };
-    }
+    },
 });
 
 export default router;

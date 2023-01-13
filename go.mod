@@ -9,6 +9,8 @@ require (
 	github.com/rs/zerolog v1.28.0
 )
 
+require gopkg.in/check.v1 v1.0.0-20190902080502-41f04d3bba15 // indirect
+
 require (
 	github.com/go-sql-driver/mysql v1.7.0 // indirect
 	gorm.io/driver/mysql v1.4.5

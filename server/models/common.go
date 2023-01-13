@@ -15,38 +15,3 @@ const (
 	InValid State = 0
 	Deleted State = -1
 )
-
-type ResourceType string
-
-const (
-	ResourceTypeMenu ResourceType = "menu"
-	ResourceTypePath ResourceType = "path"
-)
-
-type DocumentType string
-
-const (
-	DocumentTypeCSV  = "csv"
-	DocumentTypeXML  = "xml"
-	DocumentTypeJSON = "json"
-)
-
-type ColumnCalcType string
-
-const (
-	ColumnCalcTypeEdit = "edit"
-	ColumnCalcTypeCalc = "calc"
-)
-
-type OperationType uint8
-
-const (
-	OperationLogin = iota + 1
-	OperationCreateProject
-	OperationUpdateProject
-	OperationDeleteProject
-	OperationAddUser
-	OperationDeleteUser
-	OperationCreateDocument
-	OperationDeleteDocument
-)

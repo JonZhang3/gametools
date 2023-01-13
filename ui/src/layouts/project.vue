@@ -7,7 +7,7 @@
         <a-layout style="overflow: hidden">
             <a-layout-sider breakpoint="xl" collapsible :width="220" hide-trigger>
                 <div class="menu-wrapper">
-                    <SiderMenu :name="props.name" />
+                    <SiderMenu name="project" />
                 </div>
             </a-layout-sider>
             <a-layout-content class="layout-content">
@@ -20,13 +20,6 @@
 <script lang="ts" setup>
 import Header from "@/components/layouts/Header.vue";
 import SiderMenu from "@/components/layouts/SiderMenu.vue";
-
-const props = defineProps({
-    name: {
-        type: String,
-        default: "root",
-    },
-});
 </script>
 
 <style lang="less" scoped>

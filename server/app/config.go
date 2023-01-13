@@ -33,10 +33,15 @@ type token struct {
 	SigningKey string        `mapstructure:"signing-key"`
 }
 
+type datavcs struct {
+	RootPath string `mapstructure:"root-path"`
+}
+
 type config struct {
 	Server     server     `mapstructure:"server"`
 	Datasource datasource `mapstructure:"datasource"`
 	Auth       auth       `mapstructure:"auth"`
+	Datavcs    datavcs    `mapstructure:"datavcs"`
 }
 
 func initConfig(app *Application) {

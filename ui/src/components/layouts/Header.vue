@@ -2,12 +2,12 @@
     <div class="navbar">
         <div class="left-side">
             <a-space>
-                <a-typography-title style="margin: 0;font-size: 18px" :heading="5">GameTools</a-typography-title>
+                <a-typography-title style="margin: 0; font-size: 18px" :heading="5">{{ props.title }}</a-typography-title>
             </a-space>
         </div>
         <ul class="right-side">
             <li>
-                <a-tooltip :content=" '点击切换为' + (theme === 'light' ? '暗黑模式' : '亮色模式')">
+                <a-tooltip :content="'点击切换为' + (theme === 'light' ? '暗黑模式' : '亮色模式')">
                     <a-button class="nav-btn" type="outline" :shape="'circle'" @click="toggleTheme">
                         <template #icon>
                             <icon-moon-fill v-if="theme === 'dark'" />
@@ -24,6 +24,13 @@
 import { computed } from "vue";
 import { AppStore } from "@/stores";
 
+const props = defineProps({
+    title: {
+        type: String,
+        default: "GameTools",
+    },
+});
+
 const appStore = AppStore();
 const theme = computed(() => {
     return appStore.theme;
@@ -32,7 +39,6 @@ const theme = computed(() => {
 function toggleTheme() {
     appStore.toggleTheme();
 }
-
 </script>
 
 <style scoped lang="less">
