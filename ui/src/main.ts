@@ -5,6 +5,7 @@ import ArcoVueIcon from "@arco-design/web-vue/es/icon";
 import App from "@/App.vue";
 import router from "@/router";
 import store from "@/stores";
+import "@/apis/request";
 
 import "@/styles/index.less";
 

@@ -3,8 +3,6 @@ import AppStore from "@/stores/app";
 
 const store = createPinia();
 
-export {
-    AppStore
-};
+export { AppStore };
 
 export default store;

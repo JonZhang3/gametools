@@ -1,5 +1,6 @@
 import type { RouteRecordRaw } from "vue-router";
 import { createRouter, createWebHistory } from "vue-router";
+import createRouteGuard from "@/router/guard";
 import DefaultLayout from "@/layouts/default.vue";
 import ProjectLayout from "@/layouts/project.vue";
 
@@ -35,6 +36,15 @@ const routes: Array<RouteRecordRaw> = [
                     icon: "icon-apps",
                 },
             },
+            {
+                path: "/settings",
+                name: "settings",
+                component: () => import("@/pages/settings.vue"),
+                meta: {
+                    title: "设置",
+                    icon: "icon-settings",
+                },
+            },
         ],
     },
     {
@@ -52,5 +62,7 @@ const router = createRouter({
         return { top: 0 };
     },
 });
+
+createRouteGuard(router);
 
 export default router;

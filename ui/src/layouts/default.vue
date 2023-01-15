@@ -1,4 +1,3 @@
-<!-- eslint-disable vue/multi-word-component-names -->
 <template>
     <a-layout class="layout">
         <a-layout-header class="layout-navbar">
@@ -7,7 +6,7 @@
         <a-layout style="overflow: hidden">
             <a-layout-sider breakpoint="xl" collapsible :width="220" hide-trigger>
                 <div class="menu-wrapper">
-                    <SiderMenu :name="props.name" />
+                    <SideMenu :name="props.name" />
                 </div>
             </a-layout-sider>
             <a-layout-content class="layout-content">
@@ -19,7 +18,7 @@
 
 <script lang="ts" setup>
 import Header from "@/components/layouts/Header.vue";
-import SiderMenu from "@/components/layouts/SiderMenu.vue";
+import SideMenu from "@/components/layouts/SideMenu.vue";
 
 const props = defineProps({
     name: {
@@ -68,7 +67,7 @@ const props = defineProps({
 }
 
 .layout-content {
-    padding: 10px 20px 20px;
+    padding: 10px;
     overflow: auto;
     background-color: var(--color-fill-2);
     transition: padding 0.2s cubic-bezier(0.34, 0.69, 0.1, 1);

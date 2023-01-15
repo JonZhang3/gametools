@@ -12,8 +12,10 @@
     },
     "dependencies": {
         "@arco-design/web-vue": "^2.41.1",
+        "axios": "^1.2.2",
         "mitt": "^3.0.0",
         "pinia": "^2.0.28",
+        "query-string": "^8.1.0",
         "vue": "^3.2.45",
         "vue-router": "^4.1.6"
     },

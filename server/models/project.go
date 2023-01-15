@@ -1,6 +1,8 @@
 package models
 
-import "gametools/server/common"
+import (
+	"gametools/server/common"
+)
 
 type Project struct {
 	BaseModel
@@ -9,6 +11,10 @@ type Project struct {
 	State       State   `gorm:"default:1;comment:状态"`
 	CreatedBy   uint64  `gorm:"not null;comment:创建用户ID"`
 	Users       []*User `gorm:"many2many:user_project_rel"`
+}
+
+func FindProjectByName(name string) *Project {
+	return &Project{}
 }
 
 type DocumentType string
