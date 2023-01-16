@@ -1,7 +1,6 @@
 package user
 
 import (
-	"gametools/server/apis"
 	"gametools/server/app"
 	"gametools/server/common"
 	"gametools/server/models"
@@ -44,7 +43,12 @@ func login(ctx *app.Context) error {
 		return ctx.Response.Error("该用户无效")
 	}
 	// TODO 生成 JWT
-	token, err := apis.NewToken(user)
+	token, err := app.NewToken(&app.TokenClaims{
+		ID:       user.ID,
+		Username: user.Username,
+		Nickname: user.Nickname,
+		IsAdmin:  user.IsAdmin,
+	})
 	if err != nil {
 		return err
 	}

@@ -1,7 +1,6 @@
 package app
 
 import (
-	"fmt"
 	"github.com/spf13/viper"
 	"os"
 	"path"
@@ -15,7 +14,8 @@ const (
 )
 
 type server struct {
-	Port int32 `mapstructure:"port"`
+	Port             int32 `mapstructure:"port"`
+	DefaultPageLimit int   `mapstructure:"default-page-limit"`
 }
 
 type datasource struct {
@@ -55,9 +55,9 @@ func initConfig(app *Application) {
 	v := viper.New()
 	v.SetConfigFile(configFile)
 	if err := v.ReadInConfig(); err != nil {
-		panic(fmt.Errorf("read config error %v", err))
+		Logger.Panic(err, "read config error")
 	}
 	if err := v.Unmarshal(app.Config); err != nil {
-		panic(fmt.Errorf("config mapping error %v", err))
+		Logger.Panic(err, "config mapping error")
 	}
 }

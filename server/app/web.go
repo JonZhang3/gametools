@@ -8,11 +8,8 @@ import (
 	"github.com/gofiber/fiber/v2/middleware/cors"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
+	gormlogger "gorm.io/gorm/logger"
 )
-
-var DB *gorm.DB
-
-var app *Application
 
 type RouteHandleFunc func(ctx *Context) error
 
@@ -50,7 +47,7 @@ type Controller interface {
 
 const (
 	resultCodeOk    = 200
-	resultCodeError = 501
+	resultCodeError = 500
 )
 
 // JsonResult 接口响应
@@ -95,7 +92,6 @@ func useJwt(app *fiber.App, cfg *config) {
 		},
 		SigningKey: []byte(cfg.Auth.Token.SigningKey),
 		ErrorHandler: func(ctx *fiber.Ctx, err error) error {
-			fmt.Printf("%v", err)
 			Logger.Error(err, "no JWT or JWT is expired")
 			return ctx.Status(fiber.StatusUnauthorized).JSON(Error("no auth"))
 		},
@@ -105,25 +101,6 @@ func useJwt(app *fiber.App, cfg *config) {
 type Application struct {
 	Config *config
 	Router *fiber.App
-}
-
-func GetApp() *Application {
-	if app == nil {
-		panic(fmt.Errorf("application is not init, use NewApp() to init application"))
-	}
-	return app
-}
-
-func NewApp() *Application {
-	if app != nil {
-		panic("the application already initialized")
-	}
-	a := &Application{
-		Config: &config{},
-	}
-	initConfig(a)
-	app = a
-	return a
 }
 
 func (app *Application) Run(controllers ...Controller) {
@@ -137,7 +114,7 @@ func (app *Application) Run(controllers ...Controller) {
 			if e, ok := err.(*fiber.Error); ok {
 				code = e.Code
 			}
-			Logger.Error(err, "")
+			Logger.Error(err, "Internal server error")
 			return ctx.Status(code).JSON(Error(message))
 		},
 	})
@@ -156,20 +133,22 @@ func (app *Application) Run(controllers ...Controller) {
 	Logger.Info("starting server")
 	err := server.Listen(fmt.Sprintf(":%d", app.Config.Server.Port))
 	if err != nil {
-		panic(fmt.Errorf("start server error %v", err))
+		Logger.Panic(err, "start server error")
 	}
 }
 
 func (app *Application) InitDatabase(models ...any) *Application {
 	dsConfig := app.Config.Datasource
-	db, err := gorm.Open(mysql.Open(dsConfig.Dsn), &gorm.Config{})
+	db, err := gorm.Open(mysql.Open(dsConfig.Dsn), &gorm.Config{
+		Logger: gormlogger.Default.LogMode(gormlogger.Info),
+	})
 	if err != nil {
-		panic(fmt.Errorf("init database error %v", err))
+		Logger.Panic(err, "init database error")
 	}
 	if dsConfig.AutoMigrate && len(models) > 0 {
 		err = db.AutoMigrate(models...)
 		if err != nil {
-			panic(fmt.Errorf("database auto migrate error: %v", err))
+			Logger.Panic(err, "database auto migrate error")
 		}
 	}
 	DB = db

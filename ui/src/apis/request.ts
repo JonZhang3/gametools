@@ -7,8 +7,8 @@ import type { HttpResponse } from "./types";
 
 if (config.api.baseURL) {
     axios.defaults.baseURL = config.api.baseURL;
-    axios.defaults.timeout = config.api.timeout;
 }
+axios.defaults.timeout = config.api.timeout || 10 * 1000;
 
 axios.interceptors.request.use(
     (config: AxiosRequestConfig) => {
@@ -22,7 +22,7 @@ axios.interceptors.request.use(
         }
         return config;
     },
-    (error) => {
+    (error: any) => {
         return Promise.reject(error);
     }
 );
@@ -48,7 +48,7 @@ axios.interceptors.response.use(
         }
         return res;
     },
-    (error) => {
+    (error: any) => {
         Message.error({
             content: error.msg || "请求错误",
             duration: 5 * 1000,

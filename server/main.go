@@ -1,6 +1,7 @@
 package main
 
 import (
+	"gametools/server/apis/project"
 	"gametools/server/apis/user"
 	"gametools/server/app"
 	"gametools/server/models"
@@ -18,5 +19,6 @@ func main() {
 		).
 		Run(
 			user.Controller{},
+			project.Controller{},
 		)
 }

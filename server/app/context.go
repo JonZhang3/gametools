@@ -44,11 +44,16 @@ func (ctx *Context) Method(override ...string) string {
 }
 
 func (ctx *Context) Range(size int) (fiber.Range, error) {
-	return ctx.Range(size)
+	return ctx.ctx.Range(size)
 }
 
 func (ctx *Context) Redirect(location string, status ...int) error {
 	return ctx.ctx.Redirect(location, status...)
+}
+
+func (ctx *Context) CurrentUserId() uint64 {
+	claims := ParseToken(ctx.ctx)
+	return claims.ID
 }
 
 type Request struct {

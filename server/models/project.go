@@ -1,20 +1,43 @@
 package models
 
 import (
+	"gametools/server/app"
 	"gametools/server/common"
+	"gametools/server/tools"
 )
 
 type Project struct {
 	BaseModel
-	Name        string  `gorm:"unique;not null;size:64;comment:项目名"`
-	Description string  `gorm:"size:256;comment:项目描述"`
-	State       State   `gorm:"default:1;comment:状态"`
-	CreatedBy   uint64  `gorm:"not null;comment:创建用户ID"`
-	Users       []*User `gorm:"many2many:user_project_rel"`
+	Name        string  `gorm:"unique;not null;size:64;comment:项目名" form:"name" json:"name"`
+	Description string  `gorm:"size:256;comment:项目描述" form:"description" json:"description"`
+	State       State   `gorm:"default:1;comment:状态" json:"state"`
+	CreatedBy   uint64  `gorm:"not null;comment:创建用户ID" json:"createdBy"`
+	Users       []*User `gorm:"many2many:user_project_rel" json:"users"`
+}
+
+func PageListProjects(proj *Project, offset, limit int) *app.Pager {
+	tx := app.DB.Model(&Project{}).
+		Where("state = ?", tools.If(proj.State == 0, Valid, proj.State))
+	if proj.Name != "" {
+		tx.Where("name like ?", "%"+proj.Name+"%")
+	}
+	var count int64
+	tx.Count(&count)
+	var list []Project = nil
+	tx.Offset(offset).Limit(limit).Order("created_at desc").Find(&list)
+	return &app.Pager{
+		Total: count,
+		Data:  list,
+	}
 }
 
 func FindProjectByName(name string) *Project {
-	return &Project{}
+	p := &Project{}
+	result := app.DB.Where("name = ?", name).Take(p)
+	if result.RowsAffected == 0 {
+		return nil
+	}
+	return p
 }
 
 type DocumentType string
