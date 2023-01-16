@@ -3,3 +3,12 @@ export interface HttpResponse<T = unknown> {
     message: string;
     data: T;
 }
+
+export interface PageData<T = unknown> {
+    total: number;
+    data: T;
+}
+
+export type Data = {
+    [key: string]: any;
+};

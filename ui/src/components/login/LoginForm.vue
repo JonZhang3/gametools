@@ -38,6 +38,7 @@ import { useRouter } from "vue-router";
 import { Message } from "@arco-design/web-vue";
 import type { ValidatedError } from "@arco-design/web-vue/es/form/interface";
 import useLoading from "@/composables/useLoading";
+import request from "@/apis/request";
 
 const router = useRouter();
 const errorMessage = ref("");
@@ -52,14 +53,20 @@ const { loading, setLoading } = useLoading();
 async function handleLogin({ errors, values }: { errors: Record<string, ValidatedError> | undefined; values: object }) {
     setLoading(true);
     try {
-        const { redirect, ...othersQuery } = router.currentRoute.value.query;
-        await router.replace({
-            name: (redirect || "home") as string,
-            query: { ...othersQuery },
+        // const { redirect, ...othersQuery } = router.currentRoute.value.query;
+
+        await request.post("/api/login", {
+            username: userForm.username,
+            password: userForm.password,
         });
+        // await router.replace({
+        //     name: (redirect || "home") as string,
+        //     query: { ...othersQuery },
+        // });
         Message.success("欢迎使用");
     } catch (err: any) {
         errorMessage.value = err.message;
+        console.error(err);
     } finally {
         setLoading(false);
     }

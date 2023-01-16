@@ -14,29 +14,29 @@ import (
 type RouteHandleFunc func(ctx *Context) error
 
 type Router struct {
-	app *fiber.App
+	router fiber.Router
 }
 
 func (r *Router) Post(path string, handler RouteHandleFunc) {
-	r.app.Post(path, func(ctx *fiber.Ctx) error {
+	r.router.Post(path, func(ctx *fiber.Ctx) error {
 		return handler(WrapContext(ctx))
 	})
 }
 
 func (r *Router) Get(path string, handler RouteHandleFunc) {
-	r.app.Get(path, func(ctx *fiber.Ctx) error {
+	r.router.Get(path, func(ctx *fiber.Ctx) error {
 		return handler(WrapContext(ctx))
 	})
 }
 
 func (r *Router) Put(path string, handler RouteHandleFunc) {
-	r.app.Put(path, func(ctx *fiber.Ctx) error {
+	r.router.Put(path, func(ctx *fiber.Ctx) error {
 		return handler(WrapContext(ctx))
 	})
 }
 
 func (r *Router) Delete(path string, handler RouteHandleFunc) {
-	r.app.Delete(path, func(ctx *fiber.Ctx) error {
+	r.router.Delete(path, func(ctx *fiber.Ctx) error {
 		return handler(WrapContext(ctx))
 	})
 }
@@ -100,10 +100,23 @@ func useJwt(app *fiber.App, cfg *config) {
 
 type Application struct {
 	Config *config
-	Router *fiber.App
+	App    *fiber.App
 }
 
-func (app *Application) Run(controllers ...Controller) {
+func NewApp() *Application {
+	if app != nil {
+		panic("the application already initialized")
+	}
+	a := &Application{
+		Config: &config{},
+	}
+	initConfig(a)
+	a.initServer()
+	app = a
+	return a
+}
+
+func (app *Application) initServer() {
 	server := fiber.New(fiber.Config{
 		ErrorHandler: func(ctx *fiber.Ctx, err error) error {
 			message := err.Error()
@@ -121,17 +134,41 @@ func (app *Application) Run(controllers ...Controller) {
 	// 配置跨域
 	server.Use(cors.New())
 	useJwt(server, app.Config)
-	// 注册 Controller
-	if len(controllers) > 0 {
-		router := &Router{app: server}
+	app.App = server
+}
+
+func (app *Application) ApiDefaultGroup(controllers ...Controller) *Application {
+	if controllers != nil && len(controllers) > 0 {
+		router := &Router{router: app.App}
 		for _, c := range controllers {
 			if c != nil {
 				c.Register(router)
 			}
 		}
 	}
+	return app
+}
+
+func (app *Application) Api(group string, controllers ...Controller) *Application {
+	if group == "" {
+		app.ApiDefaultGroup(controllers...)
+	} else {
+		if controllers != nil && len(controllers) > 0 {
+			api := app.App.Group(group)
+			router := &Router{router: api}
+			for _, c := range controllers {
+				if c != nil {
+					c.Register(router)
+				}
+			}
+		}
+	}
+	return app
+}
+
+func (app *Application) Run() {
 	Logger.Info("starting server")
-	err := server.Listen(fmt.Sprintf(":%d", app.Config.Server.Port))
+	err := app.App.Listen(fmt.Sprintf(":%d", app.Config.Server.Port))
 	if err != nil {
 		Logger.Panic(err, "start server error")
 	}

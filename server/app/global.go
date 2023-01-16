@@ -18,15 +18,3 @@ func GetApp() *Application {
 	}
 	return app
 }
-
-func NewApp() *Application {
-	if app != nil {
-		panic("the application already initialized")
-	}
-	a := &Application{
-		Config: &config{},
-	}
-	initConfig(a)
-	app = a
-	return a
-}

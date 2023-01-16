@@ -9,6 +9,6 @@ auth:
         expire-time: 30m
         signing-key: gametools
     excludes:
-        - /login
+        - /api/login
 datavcs:
     root-path: C:/Users/user/Desktop/dolt

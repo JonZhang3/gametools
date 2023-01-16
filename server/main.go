@@ -17,8 +17,9 @@ func main() {
 			&models.Project{},
 			&models.OperationLog{},
 		).
-		Run(
+		Api("/api",
 			user.Controller{},
 			project.Controller{},
-		)
+		).
+		Run()
 }
