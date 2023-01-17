@@ -15,10 +15,7 @@ type User struct {
 
 func FindUserByUsername(username string) *User {
 	user := &User{}
-	r := app.DB.Where("username = ?", username).First(user)
-	if r.Error != nil {
-		panic(r.Error)
-	}
+	r := app.DB.Where("username = ?", username).Limit(1).Take(user)
 	if r.RowsAffected == 0 {
 		return nil
 	}

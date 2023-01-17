@@ -2,7 +2,9 @@
     <div class="navbar">
         <div class="left-side">
             <a-space>
-                <a-typography-title style="margin: 0; font-size: 18px" :heading="5">{{ props.title }}</a-typography-title>
+                <a-typography-title style="margin: 0; font-size: 18px" :heading="5"
+                    >{{ props.title }}
+                </a-typography-title>
             </a-space>
         </div>
         <ul class="right-side">
@@ -22,7 +24,7 @@
 
 <script lang="ts" setup>
 import { computed } from "vue";
-import { AppStore } from "@/stores";
+import { useAppStore } from "@/stores";
 
 const props = defineProps({
     title: {
@@ -31,7 +33,7 @@ const props = defineProps({
     },
 });
 
-const appStore = AppStore();
+const appStore = useAppStore();
 const theme = computed(() => {
     return appStore.theme;
 });

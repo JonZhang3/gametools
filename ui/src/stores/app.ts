@@ -9,7 +9,7 @@ export interface AppState {
     tabBar: boolean;
 }
 
-const AppStore = defineStore("app", {
+const useAppStore = defineStore("app", {
     state(): AppState {
         return {
             globalSettings: false,
@@ -33,4 +33,4 @@ const AppStore = defineStore("app", {
     },
 });
 
-export default AppStore;
+export default useAppStore;

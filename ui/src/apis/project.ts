@@ -1,5 +1,5 @@
-import type { PageData } from "./types";
-import axios from "axios";
+import type { HttpResponse, PageData } from "./types";
+import request from "./request";
 
 export interface Project {
     id: number;
@@ -11,8 +11,13 @@ export interface Project {
     updatedAt: string;
 }
 
-export function listProjects(page: number = 1) {
-    return axios.get<PageData<Project>>("/api/project");
-}
+const ProjectApi = {
+    listProjects(page: number = 1, name?: string): Promise<HttpResponse<PageData<Project>>> {
+        return request.get("/api/project", { page, name });
+    },
+    createProject(data: Project) {
+        return request.post("/api/project", data);
+    },
+};
 
-export function createProject() {}
+export default ProjectApi;

@@ -1,8 +1,9 @@
 import { createPinia } from "pinia";
-import AppStore from "@/stores/app";
+import useAppStore from "@/stores/app";
+import useUserStore from "@/stores/user";
 
 const store = createPinia();
 
-export { AppStore };
+export { useAppStore, useUserStore };
 
 export default store;

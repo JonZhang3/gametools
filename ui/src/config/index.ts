@@ -1,6 +1,6 @@
 export default {
     api: {
-        baseURL: "http://127.0.0.1:8080",
+        baseURL: "",
         timeout: 10 * 1000,
         dataField: "data",
         messageField: "message",

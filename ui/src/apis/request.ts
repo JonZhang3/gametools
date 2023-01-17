@@ -30,11 +30,15 @@ function createClient(settings: CreateAxiosDefaults) {
                     title: "登录无效",
                     content: "您已经登出，您可以取消留在该页面，或重新登录",
                     okText: "重新登录",
+                    cancelText: "关闭页面",
                     async onOk() {
                         window.location.reload();
                     },
+                    onCancel() {
+                        window.close();
+                    },
                 });
-                return Promise.reject(new Error("未登录或登录无效"));
+                return Promise.reject(new Error("未登录或登录失效"));
             }
             const res = response.data;
             if (res.code !== config.api.okCode) {
@@ -56,6 +60,7 @@ function createClient(settings: CreateAxiosDefaults) {
 
 class Request {
     client: AxiosInstance;
+
     constructor() {
         this.client = createClient({
             baseURL: config.api.baseURL || "",
@@ -67,7 +72,7 @@ class Request {
         });
     }
 
-    request(method: Method, url: string, data?: Data, headers?: object) {
+    request<T>(method: Method, url: string, data?: Data, headers?: object): Promise<HttpResponse<T>> {
         if (!method) {
             method = "GET";
         }
@@ -75,12 +80,13 @@ class Request {
             method,
             url,
             headers,
-            paramsSerializer(params: any) {
-                return qs.stringify(params);
+            paramsSerializer: {
+                encode: qs.parse,
+                serialize: qs.stringify,
             },
             transformRequest: [
                 (d: any, headers: any) => {
-                    if (headers["Content-Type"]?.indexOf("application/json")) {
+                    if (headers["Content-Type"]?.indexOf("application/json") > -1) {
                         return JSON.stringify(d);
                     }
                     return qs.stringify(d);
@@ -95,20 +101,19 @@ class Request {
         return this.client.request(config);
     }
 
-    get(url: string, params?: Data) {
+    get<T>(url: string, params?: Data): Promise<HttpResponse<T>> {
         return this.request("GET", url, params);
     }
 
-    post(url: string, params?: Data) {
-        setTimeout(function () {}, 4000);
+    post<T>(url: string, params?: Data): Promise<HttpResponse<T>> {
         return this.request("POST", url, params);
     }
 
-    put(url: string, params?: Data) {
+    put<T>(url: string, params?: Data): Promise<HttpResponse<T>> {
         return this.request("PUT", url, params);
     }
 
-    delete(url: string, params?: Data) {
+    delete<T>(url: string, params?: Data): Promise<HttpResponse<T>> {
         return this.request("DELETE", url, params);
     }
 }

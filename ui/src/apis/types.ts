@@ -6,7 +6,7 @@ export interface HttpResponse<T = unknown> {
 
 export interface PageData<T = unknown> {
     total: number;
-    data: T;
+    data: Array<T>;
 }
 
 export type Data = {
