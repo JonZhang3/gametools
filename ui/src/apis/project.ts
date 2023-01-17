@@ -12,8 +12,12 @@ export interface Project {
 }
 
 const ProjectApi = {
-    listProjects(page: number = 1, name?: string): Promise<HttpResponse<PageData<Project>>> {
-        return request.get("/api/project", { page, name });
+    listProjects(page: number = 1, params?: Project): Promise<HttpResponse<PageData<Project>>> {
+        return request.get("/api/project", {
+            page,
+            name: params?.name,
+            state: params?.state,
+        });
     },
     createProject(data: Project) {
         return request.post("/api/project", data);

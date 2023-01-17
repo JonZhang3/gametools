@@ -1,6 +1,7 @@
 package models
 
 import (
+	"fmt"
 	"gametools/server/app"
 	"gametools/server/common"
 	"gametools/server/tools"
@@ -21,6 +22,7 @@ func PageListProjects(proj *Project, offset, limit int) *app.Pager {
 	if proj.Name != "" {
 		tx.Where("name like ?", "%"+proj.Name+"%")
 	}
+	fmt.Println(proj.State)
 	var count int64
 	tx.Count(&count)
 	var list []Project = nil
