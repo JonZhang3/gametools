@@ -59,7 +59,8 @@ function createClient(settings: CreateAxiosDefaults) {
 }
 
 class Request {
-    client: AxiosInstance;
+    private client: AxiosInstance;
+    json: JsonRequest;
 
     constructor() {
         this.client = createClient({
@@ -70,6 +71,7 @@ class Request {
                 "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8",
             },
         });
+        this.json = new JsonRequest(this);
     }
 
     request<T>(method: Method, url: string, data?: Data, headers?: object): Promise<HttpResponse<T>> {
@@ -118,4 +120,25 @@ class Request {
     }
 }
 
-export default new Request();
+class JsonRequest {
+    parent: Request;
+    constructor(parent: Request) {
+        this.parent = parent;
+    }
+
+    post<T>(url: string, params: Data): Promise<HttpResponse<T>> {
+        return this.parent.request("POST", url, params, {
+            "Content-Type": "application/json;charset=UTF-8",
+        });
+    }
+
+    put<T>(url: string, params: Data): Promise<HttpResponse<T>> {
+        return this.parent.request("PUT", url, params, {
+            "Content-Type": "application/json;charset=UTF-8",
+        });
+    }
+}
+
+const request = new Request();
+
+export default request;

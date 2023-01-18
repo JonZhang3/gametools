@@ -12,14 +12,14 @@ export interface Project {
 }
 
 const ProjectApi = {
-    listProjects(page: number = 1, params?: Project): Promise<HttpResponse<PageData<Project>>> {
+    listProjects(page: number = 1, params?: Partial<Project>): Promise<HttpResponse<PageData<Project>>> {
         return request.get("/api/project", {
             page,
             name: params?.name,
             state: params?.state,
         });
     },
-    createProject(data: Project) {
+    createProject(data: Project): Promise<HttpResponse<Project>> {
         return request.post("/api/project", data);
     },
 };

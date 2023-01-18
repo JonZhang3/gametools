@@ -1,6 +1,6 @@
 import { ref } from "vue";
 
-export default function(initValue: boolean = false) {
+export default function (initValue: boolean = false) {
     const loading = ref(initValue);
     const setLoading = (value: boolean) => {
         loading.value = value;
@@ -11,6 +11,6 @@ export default function(initValue: boolean = false) {
     return {
         loading,
         setLoading,
-        toggle
+        toggle,
     };
 }

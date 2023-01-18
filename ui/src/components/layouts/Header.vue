@@ -18,6 +18,11 @@
                     </a-button>
                 </a-tooltip>
             </li>
+            <li>
+                <a-avatar class="header-avatar">
+                    <IconUser />
+                </a-avatar>
+            </li>
         </ul>
     </div>
 </template>
@@ -76,6 +81,11 @@ function toggleTheme() {
         border-color: rgb(var(--gray-2));
         color: rgb(var(--gray-8));
         font-size: 16px;
+    }
+
+    .header-avatar {
+        background-color: var(--color-primary-light-4);
+        cursor: pointer;
     }
 }
 </style>
