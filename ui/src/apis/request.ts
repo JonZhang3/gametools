@@ -1,5 +1,5 @@
 import type { CreateAxiosDefaults, AxiosRequestConfig, AxiosResponse, AxiosInstance, Method } from "axios";
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 import qs from "query-string";
 import { Message, Modal } from "@arco-design/web-vue";
 import { getToken } from "@/auth";
@@ -25,21 +25,6 @@ function createClient(settings: CreateAxiosDefaults) {
     client.interceptors.response.use(
         // @ts-ignore
         (response: AxiosResponse<HttpResponse>) => {
-            if (response.status === config.api.noAuthStatus) {
-                Modal.error({
-                    title: "登录无效",
-                    content: "您已经登出，您可以取消留在该页面，或重新登录",
-                    okText: "重新登录",
-                    cancelText: "关闭页面",
-                    async onOk() {
-                        window.location.reload();
-                    },
-                    onCancel() {
-                        window.close();
-                    },
-                });
-                return Promise.reject(new Error("未登录或登录失效"));
-            }
             const res = response.data;
             if (res.code !== config.api.okCode) {
                 Message.error({ content: res.message || "请求错误", duration: 5 * 1000 });
@@ -47,9 +32,22 @@ function createClient(settings: CreateAxiosDefaults) {
             }
             return res;
         },
-        (error: any) => {
+        (error: Error) => {
+            if (error instanceof AxiosError) {
+                if (error.response?.status === config.api.noAuthStatus) {
+                    Modal.error({
+                        title: "登录无效",
+                        content: "您已经登出，您可以取消留在该页面，或重新登录",
+                        okText: "重新登录",
+                        async onOk() {
+                            window.location.reload();
+                        },
+                    });
+                    return Promise.reject(new Error("未登录或登录失效"));
+                }
+            }
             Message.error({
-                content: error.msg || "请求错误",
+                content: error.message || "请求错误",
                 duration: 5 * 1000,
             });
             return Promise.reject(error);
@@ -122,6 +120,7 @@ class Request {
 
 class JsonRequest {
     parent: Request;
+
     constructor(parent: Request) {
         this.parent = parent;
     }

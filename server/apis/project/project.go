@@ -37,7 +37,7 @@ func createProject(ctx *app.Context) error {
 	}
 	existedProject := models.FindProjectByName(form.Name)
 	if existedProject != nil {
-		return ctx.Response.Error("项目已存在")
+		return ctx.Response.Error("同名项目已存在")
 	}
 	project := &models.Project{
 		Name:        form.Name,

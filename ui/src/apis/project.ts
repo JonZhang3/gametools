@@ -19,7 +19,7 @@ const ProjectApi = {
             state: params?.state,
         });
     },
-    createProject(data: Project): Promise<HttpResponse<Project>> {
+    createProject(data: Partial<Project>): Promise<HttpResponse<Project>> {
         return request.post("/api/project", data);
     },
 };

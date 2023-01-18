@@ -1,39 +1,33 @@
 <template>
-    <a-spin :loading="loading" class="container">
-        <template v-if="data.length > 0">
-            <a-space direction="vertical" fill>
-                <template v-if="data.length > 0">
-                    <a-row>
-                        <a-col style="text-align: right">
-                            <a-space>
-                                <a-input-search
-                                    v-model="searchForm.name"
-                                    @search="loadData"
-                                    placeholder="输入项目名称查找"
-                                    search-button
-                                    style="width: 280px"
-                                />
-                                <a-tooltip content="刷新" position="top">
-                                    <a-button @click="loadData">
-                                        <template #icon>
-                                            <IconRefresh />
-                                        </template>
-                                    </a-button>
-                                </a-tooltip>
-                            </a-space>
-                        </a-col>
-                    </a-row>
-                    <a-row>
-                        <a-col>
-                            <a-table :columns="columns" :data="data" :pagination="pageData"></a-table>
-                        </a-col>
-                    </a-row>
-                </template>
-            </a-space>
-        </template>
-        <div v-else class="container is-layout-center">
-            <a-empty description="暂无相关项目" />
-        </div>
+    <a-spin :loading="loading" class="container direction-vertical">
+        <a-space direction="vertical" fill>
+            <a-row>
+                <a-col style="text-align: right">
+                    <a-space>
+                        <a-input-search
+                            v-model="searchForm.name"
+                            @search="loadData"
+                            placeholder="输入项目名称查找"
+                            search-button
+                            style="width: 280px"
+                        />
+                        <a-tooltip content="刷新" position="top">
+                            <a-button @click="loadData">
+                                <template #icon>
+                                    <IconRefresh />
+                                </template>
+                            </a-button>
+                        </a-tooltip>
+                    </a-space>
+                </a-col>
+            </a-row>
+            <a-row>
+                <a-col>
+                    <a-table v-if="data.length > 0" :columns="columns" :data="data" :pagination="pageData"></a-table>
+                    <a-empty v-else description="暂无相关项目" />
+                </a-col>
+            </a-row>
+        </a-space>
     </a-spin>
 </template>
 
