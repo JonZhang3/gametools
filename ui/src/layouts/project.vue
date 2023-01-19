@@ -6,7 +6,13 @@
         <a-layout style="overflow: hidden">
             <a-layout-sider breakpoint="xl" collapsible :width="220" hide-trigger>
                 <div class="menu-wrapper">
-                    <SideMenu name="project" />
+                    <div class="back" @click="handleBack">
+                        <a-typography-text type="secondary">
+                            <IconDoubleLeft />
+                            返回
+                        </a-typography-text>
+                    </div>
+                    <SideMenu name="project-root" />
                 </div>
             </a-layout-sider>
             <a-layout-content class="layout-content">
@@ -17,8 +23,15 @@
 </template>
 
 <script lang="ts" setup>
+import { useRouter } from "vue-router";
 import Header from "@/components/layouts/Header.vue";
 import SideMenu from "@/components/layouts/SideMenu.vue";
+
+const router = useRouter();
+
+function handleBack() {
+    router.back();
+}
 </script>
 
 <style lang="less" scoped>
@@ -36,9 +49,20 @@ import SideMenu from "@/components/layouts/SideMenu.vue";
 }
 
 .menu-wrapper {
+    display: flex;
+    flex-direction: column;
     height: 100%;
     overflow: auto;
     overflow-x: hidden;
+
+    .back {
+        display: flex;
+        flex-direction: row;
+        padding: 10px 20px;
+        justify-content: center;
+        align-items: center;
+        cursor: pointer;
+    }
 
     :deep(.arco-menu) {
         ::-webkit-scrollbar {

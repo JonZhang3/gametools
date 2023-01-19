@@ -1,6 +1,7 @@
 package common
 
 import (
+	"database/sql"
 	"database/sql/driver"
 	"fmt"
 	"time"
@@ -15,27 +16,30 @@ func (t *DateTime) MarshalJSON() ([]byte, error) {
 	return []byte(stamp), nil
 }
 
-//func (t *DateTime) Scan(value interface{}) error {
-//	switch value.(type) {
-//	case time.Time:
-//		*t = DateTime(value.(time.Time))
-//	case string:
-//		ti, err := time.Parse(layout, value.(string))
-//		if err != nil {
-//			return err
-//		}
-//		*t = DateTime(ti)
-//	default:
-//		return errors.New("cannot convert to DateTime")
-//	}
-//	fmt.Printf("%s", time.Time(*t).Format(layout))
-//	return nil
-//}
-
-func (t DateTime) Value() (driver.Value, error) {
-	return time.Time(t), nil
+func (t *DateTime) UnmarshalJSON(b []byte) error {
+	ti, err := time.Parse(layout, string(b))
+	if err != nil {
+		return err
+	}
+	*t = DateTime(ti)
+	return nil
 }
 
-func (*DateTime) GormDataType() string {
-	return "datetime"
+func (t *DateTime) Scan(value interface{}) (err error) {
+	nullTime := &sql.NullTime{}
+	err = nullTime.Scan(value)
+	*t = DateTime(nullTime.Time)
+	return
+}
+
+func (t DateTime) Value() (driver.Value, error) {
+	return time.Time(t).Format(layout), nil
+}
+
+func (DateTime) GormDataType() string {
+	return "time"
+}
+
+func (t DateTime) String() string {
+	return time.Time(t).Format(layout)
 }

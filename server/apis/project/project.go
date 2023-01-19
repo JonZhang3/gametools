@@ -12,6 +12,7 @@ type Controller struct {
 func (Controller) Register(router *app.Router) {
 	router.Get("/project", pageListProjects)
 	router.Post("/project", createProject)
+	router.Delete("/project/:id", archiveProject)
 }
 
 type projectForm struct {
@@ -49,5 +50,14 @@ func createProject(ctx *app.Context) error {
 		app.Logger.Error(result.Error, "create project error")
 		return ctx.Response.Error(result.Error.Error())
 	}
+	return ctx.Response.Ok(nil)
+}
+
+func archiveProject(ctx *app.Context) error {
+	id, err := ctx.Route.ParamsInt("id")
+	if err != nil {
+		return ctx.Response.Error("参数校验错误")
+	}
+	models.ChangeProjectState(uint64(id), models.InValid)
 	return ctx.Response.Ok(nil)
 }

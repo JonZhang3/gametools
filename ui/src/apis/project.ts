@@ -22,6 +22,9 @@ const ProjectApi = {
     createProject(data: Partial<Project>): Promise<HttpResponse<Project>> {
         return request.post("/api/project", data);
     },
+    archiveProject(id: number) {
+        return request.delete(`/api/project/${id}`);
+    },
 };
 
 export default ProjectApi;

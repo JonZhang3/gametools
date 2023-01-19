@@ -2,7 +2,7 @@ import type { CreateAxiosDefaults, AxiosRequestConfig, AxiosResponse, AxiosInsta
 import axios, { AxiosError } from "axios";
 import qs from "query-string";
 import { Message, Modal } from "@arco-design/web-vue";
-import { getToken } from "@/auth";
+import { getToken, clearToken } from "@/auth";
 import config from "@/config";
 import type { HttpResponse, Data } from "./types";
 
@@ -35,6 +35,7 @@ function createClient(settings: CreateAxiosDefaults) {
         (error: Error) => {
             if (error instanceof AxiosError) {
                 if (error.response?.status === config.api.noAuthStatus) {
+                    clearToken();
                     Modal.error({
                         title: "登录无效",
                         content: "您已经登出，您可以取消留在该页面，或重新登录",

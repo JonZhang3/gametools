@@ -2,7 +2,7 @@
 import type { RouteRecordNormalized, RouteRecordRaw } from "vue-router";
 import { useRouter, useRoute } from "vue-router";
 import { compile, computed, defineComponent, h, ref } from "vue";
-import { listenerRouteChange } from "@/utils/route-listener";
+import events from "@/stores/events";
 
 export default defineComponent({
     props: {
@@ -30,7 +30,7 @@ export default defineComponent({
             });
         };
 
-        listenerRouteChange((newRoute) => {
+        events.route.listenerRouteChange((newRoute) => {
             const matched = newRoute.matched;
             for (let i = matched.length - 1; i >= 0; i--) {
                 const item = matched[i];
@@ -98,7 +98,7 @@ export default defineComponent({
                 selected-keys={selectedKeys.value}
                 auto-open-selected
                 level-indent={34}
-                style="height: 100%;"
+                style={{ flex: 1 }}
             >
                 {renderSubMenu()}
             </a-menu>

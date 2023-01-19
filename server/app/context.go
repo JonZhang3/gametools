@@ -10,6 +10,7 @@ func WrapContext(ctx *fiber.Ctx) *Context {
 		ctx:      ctx,
 		Request:  &Request{ctx: ctx},
 		Response: &Response{ctx: ctx},
+		Route:    &Route{ctx: ctx},
 	}
 }
 
@@ -17,6 +18,7 @@ type Context struct {
 	ctx      *fiber.Ctx
 	Request  *Request
 	Response *Response
+	Route    *Route
 }
 
 func (ctx *Context) App() *fiber.App {

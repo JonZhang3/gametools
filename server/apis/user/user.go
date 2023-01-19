@@ -58,8 +58,8 @@ func login(ctx *app.Context) error {
 			ID:        user.ID,
 			Username:  user.Username,
 			Nickname:  user.Nickname,
-			CreatedAt: user.CreatedAt,
-			UpdatedAt: user.UpdatedAt,
+			CreatedAt: common.DateTime(user.CreatedAt),
+			UpdatedAt: common.DateTime(user.UpdatedAt),
 		},
 	})
 }
@@ -81,8 +81,8 @@ func addUser(ctx *app.Context) error {
 		Username:  user.Username,
 		Nickname:  user.Nickname,
 		State:     user.State,
-		CreatedAt: user.CreatedAt,
-		UpdatedAt: user.UpdatedAt,
+		CreatedAt: common.DateTime(user.CreatedAt),
+		UpdatedAt: common.DateTime(user.UpdatedAt),
 	}
 	return ctx.Response.Ok(vo)
 }

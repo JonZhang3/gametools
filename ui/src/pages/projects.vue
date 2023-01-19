@@ -7,7 +7,7 @@
                 </a-tabs>
             </div>
             <div>
-                <a-button type="primary">
+                <a-button type="primary" @click="handleToCreateProject">
                     <template #icon>
                         <icon-plus />
                     </template>
@@ -16,7 +16,8 @@
             </div>
         </template>
         <template #default>
-            <ProjectList />
+            <ProjectList :type="currentKey" />
+            <CreateProjectDialog v-model="createDialogVisible" />
         </template>
     </Content>
 </template>
@@ -24,17 +25,24 @@
 <script lang="ts" setup>
 import Content from "@/components/layouts/Content.vue";
 import ProjectList from "@/components/project/ProjectList.vue";
+import CreateProjectDialog from "@/components/project/CreateProjectDialog.vue";
 import { ref } from "vue";
 
+const createDialogVisible = ref(false);
+
 const tabs = [
-    { key: "all", title: "我参与的" },
-    { key: "archived", title: "已归档的" },
+    { key: 1, title: "我参与的" },
+    { key: -1, title: "已归档的" },
 ];
 
-const currentKey = ref("all");
+const currentKey = ref(1);
 
-function handleTabsChange(key: string) {
+function handleTabsChange(key: number) {
     currentKey.value = key;
+}
+
+function handleToCreateProject() {
+    createDialogVisible.value = true;
 }
 </script>
 

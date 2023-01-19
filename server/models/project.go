@@ -1,10 +1,10 @@
 package models
 
 import (
-	"fmt"
 	"gametools/server/app"
 	"gametools/server/common"
 	"gametools/server/tools"
+	"strings"
 )
 
 type Project struct {
@@ -20,9 +20,8 @@ func PageListProjects(proj *Project, offset, limit int) *app.Pager {
 	tx := app.DB.Model(&Project{}).
 		Where("state = ?", tools.If(proj.State == 0, Valid, proj.State))
 	if proj.Name != "" {
-		tx.Where("name like ?", "%"+proj.Name+"%")
+		tx.Where("lower(name) like ?", "%"+strings.ToLower(proj.Name)+"%")
 	}
-	fmt.Println(proj.State)
 	var count int64
 	tx.Count(&count)
 	var list []Project = nil
@@ -40,6 +39,12 @@ func FindProjectByName(name string) *Project {
 		return nil
 	}
 	return p
+}
+
+func ChangeProjectState(id uint64, state State) {
+	app.DB.Model(&Project{}).
+		Where("id = ?", id).
+		Update("state", state)
 }
 
 type DocumentType string

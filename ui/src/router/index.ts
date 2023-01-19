@@ -14,6 +14,9 @@ const routes: Array<RouteRecordRaw> = [
         path: "/",
         name: "root",
         component: DefaultLayout,
+        redirect: {
+            name: "home",
+        },
         meta: {
             layout: true,
         },
@@ -51,7 +54,23 @@ const routes: Array<RouteRecordRaw> = [
         path: "/project/:id",
         name: "project-root",
         component: ProjectLayout,
-        children: [],
+        redirect: {
+            name: "documen",
+        },
+        meta: {
+            layout: tre,
+        },
+        children: [
+            {
+                path: "",
+                name: "document",
+                component: () => import("@/pages/project/document.vue"),
+                meta: {
+                    title: "文档列表",
+                    icon: "icon-app",
+                },
+            },
+        ],
     },
 ];
 

@@ -1,29 +1,23 @@
 import type { Handler } from "mitt";
-import mitt from "mitt";
 import type { RouteLocationNormalized } from "vue-router";
+import emitter from "@/stores/events/emitter";
 
-/**
- * Listening to routes alone would waste rendering performance. Use the publish-subscribe model for distribution management
- * 单独监听路由会浪费渲染性能。使用发布订阅模式去进行分发管理。
- */
-const emitter = mitt();
-
-const key = Symbol("ROUTE_CHANGE");
+const ROUTE_CHANGE = Symbol("ROUTE_CHANGE");
 
 let latestRoute: RouteLocationNormalized;
 
 export function setRouteEmitter(to: RouteLocationNormalized) {
-    emitter.emit(key, to);
+    emitter.emit(ROUTE_CHANGE, to);
     latestRoute = to;
 }
 
 export function listenerRouteChange(handler: (route: RouteLocationNormalized) => void, immediate = true) {
-    emitter.on(key, handler as Handler);
+    emitter.on(ROUTE_CHANGE, handler as Handler);
     if (immediate && latestRoute) {
         handler(latestRoute);
     }
 }
 
 export function removeRouteListener() {
-    emitter.off(key);
+    emitter.off(ROUTE_CHANGE);
 }
